@@ -302,31 +302,12 @@ export default class Server {
     if (this.config.poweredByHeader) {
       res.setHeader('X-Powered-By', `Next.js ${pkg.version}`)
     }
-    const html = await this.renderToHTML(req, res, pathname, query)
+    const html = this.renderToHTML(req, res, pathname, query)
     return sendHTML(req, res, html, req.method, this.renderOpts)
   }
 
-  async renderToHTML (req, res, pathname, query) {
-    if (this.dev) {
-      const compilationErr = await this.getCompilationError()
-      if (compilationErr) {
-        res.statusCode = 500
-        return this.renderErrorToHTML(compilationErr, req, res, pathname, query)
-      }
-    }
-
-    try {
-      return await renderToHTML(req, res, pathname, query, this.renderOpts)
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        res.statusCode = 404
-        return this.renderErrorToHTML(null, req, res, pathname, query)
-      } else {
-        if (!this.quiet) console.error(err)
-        res.statusCode = 500
-        return this.renderErrorToHTML(err, req, res, pathname, query)
-      }
-    }
+  renderToHTML (req, res, pathname, query) {
+    return renderToHTML(req, res, pathname, query, this.renderOpts)
   }
 
   async renderError (err, req, res, pathname, query) {

@@ -15,9 +15,11 @@ import App from '../lib/app'
 import ErrorDebug from '../lib/error-debug'
 import { flushChunks } from '../lib/dynamic'
 import xssFilters from 'xss-filters'
+import React from 'react'
+import Bench from './bench'
 
-export async function render (req, res, pathname, query, opts) {
-  const html = await renderToHTML(req, res, pathname, query, opts)
+export function render (req, res, pathname, query, opts) {
+  const html = renderToHTML(req, res, pathname, query, opts)
   sendHTML(req, res, html, req.method, opts)
 }
 
@@ -34,95 +36,8 @@ export function renderErrorToHTML (err, req, res, pathname, query, opts = {}) {
   return doRender(req, res, pathname, query, { ...opts, err, page: '_error' })
 }
 
-async function doRender (req, res, pathname, query, {
-  err,
-  page,
-  buildId,
-  buildStats,
-  hotReloader,
-  assetPrefix,
-  availableChunks,
-  dir = process.cwd(),
-  dev = false,
-  staticMarkup = false,
-  nextExport = false
-} = {}) {
-  page = page || pathname
-
-  await ensurePage(page, { dir, hotReloader })
-
-  const dist = getConfig(dir).distDir
-
-  let [Component, Document] = await Promise.all([
-    requireModule(join(dir, dist, 'dist', 'pages', page)),
-    requireModule(join(dir, dist, 'dist', 'pages', '_document'))
-  ])
-  Component = Component.default || Component
-  Document = Document.default || Document
-  const asPath = req.url
-  const ctx = { err, req, res, pathname, query, asPath }
-  const props = await loadGetInitialProps(Component, ctx)
-
-  // the response might be finshed on the getinitialprops call
-  if (res.finished) return
-
-  const renderPage = (enhancer = Page => Page) => {
-    const app = createElement(App, {
-      Component: enhancer(Component),
-      props,
-      router: new Router(pathname, query, asPath)
-    })
-
-    const render = staticMarkup ? renderToStaticMarkup : renderToString
-
-    let html
-    let head
-    let errorHtml = ''
-
-    try {
-      if (err && dev) {
-        errorHtml = render(createElement(ErrorDebug, { error: err }))
-      } else if (err) {
-        errorHtml = render(app)
-      } else {
-        html = render(app)
-      }
-    } finally {
-      head = Head.rewind() || defaultHead()
-    }
-    const chunks = loadChunks({ dev, dir, dist, availableChunks })
-
-    return { html, head, errorHtml, chunks }
-  }
-
-  const docProps = await loadGetInitialProps(Document, { ...ctx, renderPage })
-  // While developing, we should not cache any assets.
-  // So, we use a different buildId for each page load.
-  // With that we can ensure, we have unique URL for assets per every page load.
-  // So, it'll prevent issues like this: https://git.io/vHLtb
-  const devBuildId = Date.now()
-
-  if (res.finished) return
-
-  if (!Document.prototype || !Document.prototype.isReactComponent) throw new Error('_document.js is not exporting a React element')
-  const doc = createElement(Document, {
-    __NEXT_DATA__: {
-      props,
-      pathname,
-      query,
-      buildId: dev ? devBuildId : buildId,
-      buildStats,
-      assetPrefix,
-      nextExport,
-      err: (err) ? serializeError(dev, err) : null
-    },
-    dev,
-    dir,
-    staticMarkup,
-    ...docProps
-  })
-
-  return '<!DOCTYPE html>' + renderToStaticMarkup(doc)
+function doRender () {
+  return '<!DOCTYPE html>' + renderToString(<Bench />)
 }
 
 export async function renderScript (req, res, page, opts) {
@@ -175,9 +90,9 @@ export async function renderScriptError (req, res, page, error, customFields, { 
 
 export function sendHTML (req, res, html, method, { dev }) {
   if (res.finished) return
-  const etag = generateETag(html)
+  // const etag = generateETag(html)
 
-  if (fresh(req.headers, { etag })) {
+  if (fresh(req.headers, {})) {
     res.statusCode = 304
     res.end()
     return
@@ -189,9 +104,9 @@ export function sendHTML (req, res, html, method, { dev }) {
     res.setHeader('Cache-Control', 'no-store, must-revalidate')
   }
 
-  res.setHeader('ETag', etag)
+  // res.setHeader('ETag', etag)
   res.setHeader('Content-Type', 'text/html')
-  res.setHeader('Content-Length', Buffer.byteLength(html))
+  // res.setHeader('Content-Length', Buffer.byteLength(html))
   res.end(method === 'HEAD' ? null : html)
 }
 
