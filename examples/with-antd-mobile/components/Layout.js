@@ -8,9 +8,11 @@ export default class Layout extends Component {
     const locale = language.substr(0, 2) === 'en' ? enUS : undefined
 
     return (
-      <LocaleProvider locale={locale}>
-        {children}
-      </LocaleProvider>
+      <div>
+        <LocaleProvider locale={locale}>
+          {children}
+        </LocaleProvider>
+      </div>
     )
   }
 }

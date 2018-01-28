@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Router from 'next/router'
-import { TabBar, Icon } from 'antd-mobile'
+import { TabBar, Icon,  } from 'antd-mobile'
 
 export default class MenuBar extends Component {
   render () {
@@ -10,23 +10,27 @@ export default class MenuBar extends Component {
     } = this.props
 
     return (
-      <TabBar>
-        {tabBarData.map(({ title, icon, selectedIcon, link, dot, component: Component }) => (
-          <TabBar.Item
-            key={link}
-            title={title}
-            icon={<Icon type={icon} />}
-            selectedIcon={<Icon type={selectedIcon} />}
-            selected={pathname === link}
-            onPress={() => Router.push(link)}
-          >
-            {children}
-          </TabBar.Item>
-        ))}
-      </TabBar>
+      <div style={{ position: 'fixed', height: '100%', width: '100%', bottom: 0 }}>
+        <TabBar>
+          {tabBarData.map(({ title, icon, selectedIcon, link, dot, component: Component }) => (
+            <TabBar.Item
+              key={link}
+              title={title}
+              icon={<Icon type={icon} />}
+              selectedIcon={<Icon type={selectedIcon} />}
+              selected={pathname === link}
+              onPress={() => Router.push(link)}
+            >
+            
+                {children}  
+            </TabBar.Item>
+          ))}
+        </TabBar>
+      </div>
     )
   }
 }
+
 
 const tabBarData = [
   {

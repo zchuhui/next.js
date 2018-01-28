@@ -7,7 +7,7 @@ export default () => (
         content: ' (current page)';
       }
 
-      .nav-link {
+      .nav-link { 
         text-decoration: none;
         padding: 10px;
         display: block;

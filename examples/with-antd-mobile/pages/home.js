@@ -1,21 +1,22 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import {
   WhiteSpace, WingBlank,
-  NavBar, Icon, Pagination, Steps
+  NavBar, Icon,
+  Grid
 } from 'antd-mobile'
 import Layout from '../components/Layout'
 import MenuBar from '../components/MenuBar'
+//import styles from '../assets/base.scss'
 
 export default class Home extends Component {
-  static getInitialProps ({ req }) {
+  static getInitialProps({ req }) {
     const language = req ? req.headers['accept-language'] : navigator.language
-
     return {
       language
     }
   }
 
-  render () {
+  render() {
     const {
       language,
       url: { pathname }
@@ -23,6 +24,7 @@ export default class Home extends Component {
 
     return (
       <Layout language={language}>
+        {/* <style dangerouslySetInnerHTML={{ __html: stylesheet }} /> */} 
         <MenuBar
           pathname={pathname}
         >
@@ -35,20 +37,16 @@ export default class Home extends Component {
               <Icon key='1' type='ellipsis' />
             ]}
           >
-            NavBar
           </NavBar>
-          <WhiteSpace />
-          <Pagination total={5} current={0} />
-          <WhiteSpace />
-          <WingBlank>
-            <Steps current={1}>
-              <Steps.Step title='Finished' description='Most components has supported' />
-              <Steps.Step title='In Progress' description='Switch Modal and Menu' />
-              <Steps.Step title='Waiting' description='1.2.0' />
-            </Steps>
-          </WingBlank>
+            <Grid data={data} activeStyle={false} />
+            <p> test name </p>
         </MenuBar>
       </Layout>
     )
   }
 }
+
+const data = Array.from(new Array(9)).map((_val, i) => ({
+  icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',
+  text: `name${i}`,
+}));
