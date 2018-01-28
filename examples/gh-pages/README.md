@@ -1,4 +1,5 @@
 # gh-pages Hello World example
+# 部署 gh-pages 项目，生产一个静态站点
 
 ## How to use
 
