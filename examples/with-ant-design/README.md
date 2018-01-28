@@ -1,3 +1,20 @@
+
+# 在 `next.js`中使用`antd`
+
+## 1. 安装依赖
+
+```bash
+yarn
+```
+
+## 2. 启动项目
+
+```bash
+npm run dev
+```
+
+---
+
 [![Deploy to now](https://deploy.now.sh/static/button.svg)](https://deploy.now.sh/?repo=https://github.com/zeit/next.js/tree/master/examples/with-ant-design)
 
 # Ant Design example

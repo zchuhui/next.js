@@ -1,4 +1,4 @@
-import Layout from '../index.js'
+import Layout from '../components/Layout'
 import { Form, Select, InputNumber, DatePicker, Switch, Slider, Button } from 'antd'
 
 const FormItem = Form.Item
@@ -24,7 +24,7 @@ export default () => (
       >
           <Switch defaultChecked name='switch' />
         </FormItem>
-
+        
         <FormItem
           label='Slider'
           labelCol={{ span: 8 }}
